@@ -1,0 +1,100 @@
+program opendiy;
+
+{$mode objfpc}{$H+}
+
+uses
+  {$IFNDEF WINDOWS}
+  cthreads,
+  {$ENDIF}
+  Interfaces, Classes, sysutils, carddata, carddrawer, sourceloader, fontloader,
+  textdrawer, textliner;
+
+
+function test1(): TCardData;
+begin
+  Result := TCardData.Create;
+  Result.CardType:= ctMonster;
+  Result.MonsterType:= otLink;
+  Result.Attribute:= maDark;
+  Result.LinkPosition:= [lp1, lp2, lp3];
+  Result.LinkValue:= '2';
+  Result.CardAtk:= '9500';
+  Result.CardRace:= '【幻竜族/効果】';
+  Result.IsCommented:= True;
+  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
+end;
+
+function test11(): TCardData;
+begin
+  Result := TCardData.Create;
+  Result.CardType:= ctMonster;
+  Result.PendulumType:= ptEffect;
+  Result.Attribute:= maDark;
+  Result.CardLevel:= 4;
+  Result.CardAtk:= '9500';
+  Result.CardDef:= '9999';
+  Result.CardScaleLeft:= 5;
+  Result.CardScaleRight:= 9;
+  Result.CardRace:= '【幻竜族/効果】';
+  Result.IsCommented:= True;
+  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
+  Result.CardPendulumEffect:= Result.CardEffect;
+end;
+
+function test2(): TCardData;
+begin
+  Result := TCardData.Create;
+  Result.CardType:= ctMagic;
+  Result.IsLink:= False;
+  Result.MagicType:= mtCont;
+  Result.IsCommented:= True;
+  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
+end;
+
+function test3(): TCardData;
+begin
+  Result := TCardData.Create;
+  Result.CardType:= ctTrap;
+  Result.IsLink:= True;
+  Result.LinkPosition:= [lp8, lp2];
+  Result.IsCommented:= False;
+  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
+end;
+
+var
+  src: TSources;
+  info: TCardData;
+  font: TFontLoader;
+begin
+  src := TSources.Create('../module');
+
+
+  info := test1();
+  font := TFontLoader.Create(info.IsCommented);
+  TCardDrawer.drawCard(info, src, font, 'a.png');
+  font.Free;
+  info.Free;
+
+
+  info := test11();
+  font := TFontLoader.Create(info.IsCommented);
+  TCardDrawer.drawCard(info, src, font, 'b.png');
+  font.Free;
+  info.Free;
+
+  info := test2();
+  font := TFontLoader.Create(info.IsCommented);
+  TCardDrawer.drawCard(info, src, font, 'c.png');
+  font.Free;
+  info.Free;
+
+  info := test3();
+  font := TFontLoader.Create(info.IsCommented);
+  TCardDrawer.drawCard(info, src, font, 'd.png');
+  font.Free;
+  info.Free;
+
+  src.Free;
+
+end.
+
