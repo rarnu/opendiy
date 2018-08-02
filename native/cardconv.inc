@@ -28,6 +28,7 @@ const
   KEY_CARDIMAGE = 'cardimage';
 
   KEY_USE_COMMENT = 'jpcomment';
+  KEY_IMAGE_STRETCH = 'stretch';
 
 function int2CardType(i: Integer): TCardType;
 begin

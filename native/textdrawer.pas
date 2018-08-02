@@ -5,7 +5,7 @@ unit textdrawer;
 interface
 
 uses
-  Classes, SysUtils, Graphics, fontloader, textliner;
+  Classes, SysUtils, Graphics, fontloader, textliner, carddata;
 
 procedure drawLinkValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
 procedure drawAtkValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
@@ -17,13 +17,21 @@ procedure drawEffectValue(base: TPortableNetworkGraphic; afont: TFontLoader; val
 procedure drawPendulumEffect(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
 procedure drawMTEffect(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
 
+procedure drawPackValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
+procedure drawPendulumPackValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
+procedure drawTermValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
+procedure drawNameValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string; rare: TRareType);
+procedure drawCopyrightValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
+procedure drawPasswordValue(base: TPortableNetworkGraphic; afont: TFontLoader; value: string);
+
 
 implementation
 
 procedure baseCanvasConfig(base: TPortableNetworkGraphic);
 begin
   with base.Canvas do begin
-    Pen.Color:= clBlack;
+    Font.Color:= clBlack;
+    // Pen.Color:= clBlack;
     Brush.Style:= bsClear;
   end;
 end;
@@ -150,6 +158,100 @@ begin
     for i:= 0 to len - 1 do begin
       TextOut(afont.MTEffect.X, afont.MTEffect.Y + afont.MTEffect.LineHeight * i, lines[i]);
     end;
+  end;
+end;
+
+procedure drawPackValue(base: TPortableNetworkGraphic; afont: TFontLoader;
+  value: string);
+begin
+  baseCanvasConfig(base);
+  with base.Canvas do begin
+    Font.Name:= afont.PackValue.Font;
+    Font.Size:= afont.PackValue.Size;
+    TextOut(afont.PackValue.Right - TextWidth(value), afont.PackValue.Y, value);
+  end;
+end;
+
+procedure drawPendulumPackValue(base: TPortableNetworkGraphic;
+  afont: TFontLoader; value: string);
+begin
+  baseCanvasConfig(base);
+  with base.Canvas do begin
+    Font.Name:= afont.PendulumPack.Font;
+    Font.Size:= afont.PendulumPack.Size;
+    TextOut(afont.PendulumPack.X, afont.PendulumPack.Y, value);
+  end;
+end;
+
+procedure drawTermValue(base: TPortableNetworkGraphic; afont: TFontLoader;
+  value: string);
+begin
+  baseCanvasConfig(base);
+  with base.Canvas do begin
+    Font.Name:= afont.TermValue.Font;
+    Font.Size:= afont.TermValue.Size;
+    Font.Style:= [fsBold];
+    TextOut(afont.TermValue.X, afont.TermValue.Y, value);
+  end;
+end;
+
+procedure drawNameValue(base: TPortableNetworkGraphic; afont: TFontLoader;
+  value: string; rare: TRareType);
+begin
+  baseCanvasConfig(base);
+  with base.Canvas do begin
+    Font.Name:= afont.NameValue.Font;
+    Font.Size:= afont.NameValue.Size;
+    case rare of
+    rtBlack:
+      begin
+        Font.Color:= clBlack;
+        TextOut(afont.NameValue.X, afont.NameValue.Y, value);
+      end;
+    rtWhite:
+      begin
+        Font.Color:= clWhite;
+        TextOut(afont.NameValue.X, afont.NameValue.Y, value);
+      end;
+    rtSilver:
+      begin
+        Font.Color:= clSilver;
+        TextOut(afont.NameValue.X, afont.NameValue.Y, value);
+      end;
+    rtGod:
+      begin
+        Font.Color:= RGBToColor(255, 215, 0);
+        TextOut(afont.NameValue.X, afont.NameValue.Y, value);
+      end;
+    rtRed:
+      begin
+        Font.Color:= clMaroon;
+        TextOut(afont.NameValue.X, afont.NameValue.Y, value);
+      end;
+    end;
+  end;
+end;
+
+procedure drawCopyrightValue(base: TPortableNetworkGraphic; afont: TFontLoader;
+  value: string);
+begin
+  baseCanvasConfig(base);
+  with base.Canvas do begin
+    Font.Name:= afont.CopyrightValue.Font;
+    Font.Size:= afont.CopyrightValue.Size;
+    TextOut(afont.CopyrightValue.Right - TextWidth(value), afont.CopyrightValue.Y, value);
+  end;
+end;
+
+procedure drawPasswordValue(base: TPortableNetworkGraphic; afont: TFontLoader;
+  value: string);
+begin
+  baseCanvasConfig(base);
+  with base.Canvas do begin
+    Font.Name:= afont.PasswordValue.Font;
+    Font.Size:= afont.PasswordValue.Size;
+    Font.Style := [fsBold];
+    TextOut(afont.PasswordValue.X, afont.PasswordValue.Y, value);
   end;
 end;
 

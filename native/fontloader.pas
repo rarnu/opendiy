@@ -22,30 +22,21 @@ type
     property Size: Integer read FSize write FSize;
   end;
 
-  { TLinkValue }
+  { TRightFontBase }
 
-  TLinkValue = class(TFontBase)
-  end;
-
-  { TAtkValue }
-
-  TAtkDefValue = class(TFontBase)
-  end;
-
-  TScaleValue = class(TFontBase)
-  end;
-
-  TRaceValue = class(TFontBase)
+  TRightFontBase = class(TFontBase)
+  private
+    FRight: Integer;
+  public
+    property Right: Integer read FRight write FRight;
   end;
 
   { TEffectValue }
 
-  TEffectValue = class(TFontBase)
+  TEffectValue = class(TRightFontBase)
   private
     FLineHeight: Integer;
-    FRight: Integer;
   public
-    property Right: Integer read FRight write FRight;
     property LineHeight: Integer read FLineHeight write FLineHeight;
   end;
 
@@ -53,29 +44,41 @@ type
 
   TFontLoader = class
   private
-    FAtkValue: TAtkDefValue;
-    FDefValue: TAtkDefValue;
+    FAtkValue: TFontBase;
+    FCopyrightValue: TRightFontBase;
+    FDefValue: TFontBase;
     FEffectValue: TEffectValue;
-    FLinkValue: TLinkValue;
+    FLinkValue: TFontBase;
     FMTEffect: TEffectValue;
+    FNameValue: TFontBase;
+    FPackValue: TRightFontBase;
+    FPasswordValue: TFontBase;
     FPendulumEffectValue: TEffectValue;
-    FRaceValue: TRaceValue;
-    FScaleLeft: TScaleValue;
-    FScaleRight: TScaleValue;
+    FPendulumPack: TFontBase;
+    FRaceValue: TFontBase;
+    FScaleLeft: TFontBase;
+    FScaleRight: TFontBase;
+    FTermValue: TFontBase;
   public
     constructor Create(AUseComment: Boolean);
     destructor Destroy; override;
     function validate(): Boolean;
   public
-    property LinkValue: TLinkValue read FLinkValue write FLinkValue;
-    property AtkValue: TAtkDefValue read FAtkValue write FAtkValue;
-    property DefValue: TAtkDefValue read FDefValue write FDefValue;
-    property ScaleLeft: TScaleValue read FScaleLeft write FScaleLeft;
-    property ScaleRight: TScaleValue read FScaleRight write FScaleRight;
-    property RaceValue: TRaceValue read FRaceValue write FRaceValue;
+    property LinkValue: TFontBase read FLinkValue write FLinkValue;
+    property AtkValue: TFontBase read FAtkValue write FAtkValue;
+    property DefValue: TFontBase read FDefValue write FDefValue;
+    property ScaleLeft: TFontBase read FScaleLeft write FScaleLeft;
+    property ScaleRight: TFontBase read FScaleRight write FScaleRight;
+    property RaceValue: TFontBase read FRaceValue write FRaceValue;
     property EffectValue: TEffectValue read FEffectValue write FEffectValue;
     property PendulumEffectValue: TEffectValue read FPendulumEffectValue write FPendulumEffectValue;
     property MTEffect: TEffectValue read FMTEffect write FMTEffect;
+    property PackValue: TRightFontBase read FPackValue write FPackValue;
+    property PendulumPack: TFontBase read FPendulumPack write FPendulumPack;
+    property TermValue: TFontBase read FTermValue write FTermValue;
+    property PasswordValue: TFontBase read FPasswordValue write FPasswordValue;
+    property CopyrightValue: TRightFontBase read FCopyrightValue write FCopyrightValue;
+    property NameValue: TFontBase read FNameValue write FNameValue;
   end;
 
 implementation
@@ -86,6 +89,10 @@ const
   KEY_FONT_ATKDEFSCALE = 'atkdefscale';
   KEY_FONT_EFFECT_JP = 'effectjp';
   KEY_FONT_EFFECT_ZH = 'effectzh';
+  KEY_FONT_NAME = 'namezh';
+  KEY_FONT_PACKPASS = 'packpass';
+  KEY_FONT_TERM = 'term';
+  KEY_FONT_COPYRIGHT = 'copyright';
 
 { TFontLoader }
 
@@ -100,6 +107,12 @@ begin
   FEffectValue.Free;
   FPendulumEffectValue.Free;
   FMTEffect.Free;
+  FPackValue.Free;
+  FTermValue.Free;
+  FPasswordValue.Free;
+  FCopyrightValue.Free;
+  FNameValue.Free;
+  FPendulumPack.Free;
   inherited Destroy;
 end;
 
@@ -109,35 +122,36 @@ var
   atkdef: string;
   jp: string;
   zh: string;
+  pp: string;
 begin
   ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
 
-  FLinkValue := TLinkValue.Create;
+  FLinkValue := TFontBase.Create;
   FLinkValue.Font:= ini.ReadString(SEC_CONFIG, KEY_FONT_LINK, 'EurostileCandyW01-Semibold');
   FLinkValue.X:= 2111;
   FLinkValue.Y:= 3170;
   FLinkValue.Size:= 92;
 
   atkdef:= ini.ReadString(SEC_CONFIG, KEY_FONT_ATKDEFSCALE, 'MatrixBoldSmallCaps');
-  FAtkValue := TAtkDefValue.Create;
+  FAtkValue := TFontBase.Create;
   FAtkValue.Font:= atkdef;
   FAtkValue.X:= 1490;
   FAtkValue.Y:= 3182;
   FAtkValue.Size:= 95;
 
-  FDefValue := TAtkDefValue.Create;
+  FDefValue := TFontBase.Create;
   FDefValue.Font:= atkdef;
   FDefValue.X:= 1980;
   FDefValue.Y:= 3182;
   FDefValue.Size:= 95;
 
-  FScaleLeft := TScaleValue.Create;
+  FScaleLeft := TFontBase.Create;
   FScaleLeft.Font:= atkdef;
   FScaleLeft.X:= 192;
   FScaleLeft.Y:= 2390;
   FScaleLeft.Size:= 150;
 
-  FScaleRight := TScaleValue.Create;
+  FScaleRight := TFontBase.Create;
   FScaleRight.Font:= atkdef;
   FScaleRight.X:= 2110;
   FScaleRight.Y:= 2390;
@@ -145,7 +159,7 @@ begin
 
   jp := ini.ReadString(SEC_CONFIG, KEY_FONT_EFFECT_JP, 'YGODIY-JP');
   zh := ini.ReadString(SEC_CONFIG, KEY_FONT_EFFECT_ZH, 'DFPLiShuW5-B5');
-  FRaceValue := TRaceValue.Create;
+  FRaceValue := TFontBase.Create;
   if (AUseComment) then begin
     FRaceValue.Font:= jp;
   end else begin
@@ -190,6 +204,48 @@ begin
   FMTEffect.Right:= 2210;
   FMTEffect.Size:= 64;
   FMTEffect.LineHeight:= 64;
+
+  pp := ini.ReadString(SEC_CONFIG, KEY_FONT_PACKPASS, 'ITC Stone Serif');
+
+  FPackValue := TRightFontBase.Create;
+  FPackValue.Font:= pp;
+  FPackValue.Y:= 2504;
+  FPackValue.Right:= 2130;
+  FPackValue.Size:= 65;
+
+  FPendulumPack := TFontBase.Create;
+  FPendulumPack.Font:= pp;
+  FPendulumPack.Size:= 65;
+  FPendulumPack.X:= 190;
+  FPendulumPack.Y:= 3195;
+
+  FPasswordValue := TFontBase.Create;
+  FPasswordValue.Font:= pp;
+  FPasswordValue.X:= 90;
+  FPasswordValue.Y:= 3326;
+  FPasswordValue.Size:= 72;
+
+  FTermValue := TFontBase.Create;
+  FTermValue.Font:= ini.ReadString(SEC_CONFIG, KEY_FONT_TERM, 'BankGothic Md BT');
+  FTermValue.X:= 240;
+  FTermValue.Y:= 2490;
+  FTermValue.Size:= 80;
+
+  FCopyrightValue := TRightFontBase.Create;
+  FCopyrightValue.Font:= ini.ReadString(SEC_CONFIG, KEY_FONT_COPYRIGHT, 'Yugioh Copyright');
+  FCopyrightValue.Y:= 3321;
+  FCopyrightValue.Right:= 2170;
+  FCopyrightValue.Size:= 54;
+
+  FNameValue := TFontBase.Create;
+  if (AUseComment) then begin
+    FNameValue.Font:= jp;
+  end else begin
+    FNameValue.Font:= ini.ReadString(SEC_CONFIG, KEY_FONT_NAME, 'DFLeiSho-SB');
+  end;
+  FNameValue.X:= 160;
+  FNameValue.Y:= 186;
+  FNameValue.Size:= 160;
 
   ini.Free;
 end;

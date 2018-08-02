@@ -26,9 +26,15 @@ type
     FTrapLink: string;
     FMagicTypeList: TStringList;
     FTrapTypeList: TStringList;
+    FLicTypeList: TStringList;
+    FPR: string;
+    FPendulumPR: string;
+    FBoard: string;
 
     function GetAttribute(AIndex: Integer): string;
+    function GetBoard: string;
     function GetLevel(AIndex: Integer): string;
+    function GetLicTypeMark(AIndex: Integer): string;
     function GetLinkMark(AIndex: Integer): string;
     function GetMagic: string;
     function GetMagicLink: string;
@@ -36,6 +42,8 @@ type
     function GetMonster(AIndex: Integer): string;
     function GetMTLinkMark(AIndex: Integer): string;
     function GetPendulumMonster(AIndex: Integer): string;
+    function GetPendulumPR: string;
+    function GetPR: string;
     function GetRank(AIndex: Integer): string;
     function GetTrap: string;
     function GetTrapLink: string;
@@ -46,6 +54,7 @@ type
     destructor Destroy; override;
     class function loadFromDir(APath: string): TSources;
   public
+    property Board: string read GetBoard;
     property Monster[AIndex: Integer]: string read GetMonster;
     property PendulumMonster[AIndex: Integer]: string read GetPendulumMonster;
     property Attribute[AIndex: Integer]: string read GetAttribute;
@@ -53,6 +62,7 @@ type
     property Rank[AIndex: Integer]: string read GetRank;
     property LinkMark[AIndex: Integer]: string read GetLinkMark;
     property MTLinkMark[AIndex: Integer]: string read GetMTLinkMark;
+    property LicTypeMark[AIndex: Integer]: string read GetLicTypeMark;
 
     property Magic: string read GetMagic;
     property Trap: string read GetTrap;
@@ -60,6 +70,8 @@ type
     property TrapLink: string read GetTrapLink;
     property MagicType[AIndex: Integer]: string read GetMagicType;
     property TrapType[AIndex: Integer]: string read GetTrapType;
+    property PR: string read GetPR;
+    property PendulumPR: string read GetPendulumPR;
   end;
 
 implementation
@@ -82,9 +94,19 @@ begin
   Exit(FAttributeList[AIndex]);
 end;
 
+function TSources.GetBoard: string;
+begin
+  Exit(FBoard);
+end;
+
 function TSources.GetLevel(AIndex: Integer): string;
 begin
   Exit(FLevelList[AIndex]);
+end;
+
+function TSources.GetLicTypeMark(AIndex: Integer): string;
+begin
+  Exit(FLicTypeList[AIndex]);
 end;
 
 function TSources.GetLinkMark(AIndex: Integer): string;
@@ -112,6 +134,16 @@ begin
   Exit(FPendulumMonsterList[AIndex]);
 end;
 
+function TSources.GetPendulumPR: string;
+begin
+  Exit(FPendulumPR);
+end;
+
+function TSources.GetPR: string;
+begin
+  Exit(FPR);
+end;
+
 function TSources.GetRank(AIndex: Integer): string;
 begin
   Exit(FRankList[AIndex]);
@@ -135,6 +167,9 @@ end;
 constructor TSources.Create(APath: string);
 begin
   if (not APath.EndsWith('/')) then APath += '/';
+
+  FBoard:= APath + 'board.png';
+
   FMonsterList := TStringList.Create;
   FMonsterList.Add(APath + 'monster_normal.png');
   FMonsterList.Add(APath + 'monster_effect.png');
@@ -236,6 +271,17 @@ begin
   FTrapTypeList.Add(APath + 'trap_normal.png');
   FTrapTypeList.Add(APath + 'trap_cont.png');
   FTrapTypeList.Add(APath + 'trap_counter.png');
+
+  FLicTypeList := TStringList.Create;
+  FLicTypeList.Add(APath + 'licmark_1.png');
+  FLicTypeList.Add(APath + 'licmark_2.png');
+  FLicTypeList.Add(APath + 'licmark_3.png');
+  FLicTypeList.Add(APath + 'licmark_4.png');
+  FLicTypeList.Add(APath + 'licmark_5.png');
+
+  FPR:= APath + 'mask.png';
+  FPendulumPR:= APath + 'mask_pendulum.png';
+
 end;
 
 destructor TSources.Destroy;
@@ -249,7 +295,7 @@ begin
   FMTLinkMarkList.Free;
   FMagicTypeList.Free;
   FTrapTypeList.Free;
-
+  FLicTypeList.Free;
   inherited Destroy;
 end;
 

@@ -46,6 +46,7 @@ type
     FFaceType: TFaceType;
     FIsCommented: Boolean;
     FIsLink: Boolean;
+    FIsStretch: Boolean;
     FLicType: TLicType;
     FLinkPosition: TLinkPositions;
     FLinkValue: string;
@@ -90,6 +91,7 @@ type
     property LinkValue: string read FLinkValue write FLinkValue;
     property CardImage: string read FCardImage write FCardImage;
     property IsCommented: Boolean read FIsCommented write FIsCommented;
+    property IsStretch: Boolean read FIsStretch write FIsStretch;
   end;
 
 {$I cardconvh.inc}
@@ -164,6 +166,7 @@ begin
   cd.LinkValue:= AJson.Strings[KEY_LINKVALUE];
   cd.CardImage:= AJson.Strings[KEY_CARDIMAGE];
   cd.IsCommented:= AJson.Booleans[KEY_USE_COMMENT];
+  cd.IsStretch:= AJson.Booleans[KEY_IMAGE_STRETCH];
   Exit(cd);
 end;
 
@@ -198,7 +201,8 @@ begin
   s += Format('"%s":"%s",', [KEY_DEF, FCardDef]);
   s += Format('"%s":"%s",', [KEY_LINKVALUE, FLinkValue]);
   s += Format('"%s":"%s",', [KEY_CARDIMAGE, FCardImage]);
-  s += Format('"%s":%s', [KEY_USE_COMMENT, BoolToStr(FIsCommented, True)]);
+  s += Format('"%s":%s,', [KEY_USE_COMMENT, BoolToStr(FIsCommented, True)]);
+  s += Format('"%s":%s', [KEY_IMAGE_STRETCH, BoolToStr(FIsStretch, True)]);
   s += '}';
   with TStringList.Create do begin
     Text:= s;
@@ -211,7 +215,7 @@ constructor TCardData.Create;
 begin
   FAttribute:= maGod;
   FCardAtk:= '';
-  FCardCopyright:= '';
+  FCardCopyright:= '©高桥和希 スタジオ·ダイス/集英社';
   FCardDef:= '';
   FCardEffect:= '';
   FCardLevel:= 0;
@@ -234,6 +238,9 @@ begin
   FRareType:= rtBlack;
   FTrapType:= ttNone;
   FIsCommented:= False;
+  FLinkValue:= '';
+  FCardImage:= '';
+  FIsStretch:= False;
 end;
 
 end.
