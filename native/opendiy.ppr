@@ -74,10 +74,17 @@ begin
 end;
 
 var
+  v: Boolean;
   src: TSources;
   info: TCardData;
   font: TFontLoader;
 begin
+
+  v := TFontLoader.validate();
+  WriteLn(Format('fonts => %s', [BoolToStr(v, True)]));
+
+  (*
+
   src := TSources.Create('../module');
 
   info := test1();
@@ -105,6 +112,8 @@ begin
   info.Free;
 
   src.Free;
+
+  *)
 
 end.
 
