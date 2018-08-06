@@ -34,8 +34,6 @@ type
     FlblPendulumType: TD2Text;
     FcmbPendulumType: TD2HudStringComboBox;
 
-
-    procedure onBtnDemoClicked(Sender: TObject);
     procedure onCardTypeChange(Sender: TObject);
     procedure onMonsterTypeChange(Sender: TObject);
     procedure onPendulumTypeChange(Sender: TObject);
@@ -54,13 +52,9 @@ uses
 
 {$R *.frm}
 
-
-
 { TFormMain }
 
 procedure TFormMain.FormCreate(Sender: TObject);
-var
-  t: string = 'Sample';
 begin
   inherited;
   Height:= 922;
@@ -133,36 +127,30 @@ begin
   FSource.Free;
 end;
 
-procedure TFormMain.onBtnDemoClicked(Sender: TObject);
-begin
-  // showHandle('Sample', FText, 100, 100, trunc(FText.Font.Size));
-end;
-
 procedure TFormMain.onCardTypeChange(Sender: TObject);
 begin
   case FcmbCardType.ItemIndex of
   0:
-  begin
-    FlayMonster.Visible:= True;
-    FlayMagic.Visible:= False;
-    FlayTrap.Visible:= False;
-    FsvRight.Realign;
-  end;
+    begin
+      FlayMonster.Visible:= True;
+      FlayMagic.Visible:= False;
+      FlayTrap.Visible:= False;
+      FsvRight.Realign;
+    end;
   1:
-  begin
-    FlayMonster.Visible:= False;
-    FlayMagic.Visible:= True;
-    FlayTrap.Visible:= False;
-    FsvRight.Realign;
-  end;
+    begin
+      FlayMonster.Visible:= False;
+      FlayMagic.Visible:= True;
+      FlayTrap.Visible:= False;
+      FsvRight.Realign;
+    end;
   2:
-  begin
-    FlayMonster.Visible:= False;
-    FlayMagic.Visible:= False;
-    FlayTrap.Visible:= True;
-    FsvRight.Realign;
-  end;
-
+    begin
+      FlayMonster.Visible:= False;
+      FlayMagic.Visible:= False;
+      FlayTrap.Visible:= True;
+      FsvRight.Realign;
+    end;
   end;
 end;
 

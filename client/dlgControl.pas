@@ -168,8 +168,8 @@ begin
     Inc(idx);
     Sleep(1);
   end;
-  FDText.Width:= FDText.Canvas.TextWidth(FDText.Text);
-  FDText.Height:= FDText.Canvas.TextHeight(FDText.Text);
+  FDText.Width:= FDText.Canvas.TextWidth(FDText.TextW);
+  FDText.Height:= FDText.Canvas.TextHeight(FDText.TextW);
 end;
 
 end.
