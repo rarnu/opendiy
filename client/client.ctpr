@@ -21,13 +21,10 @@
         <FormatVersion Value="1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="2">
+    <RequiredPackages Count="1">
       <Item1>
-        <PackageName Value="pl_orca"/>
-      </Item1>
-      <Item2>
         <PackageName Value="adLCL"/>
-      </Item2>
+      </Item1>
     </RequiredPackages>
     <Units Count="5">
       <Unit0>
@@ -35,28 +32,25 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="../../myct/orca/frmBase.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="FormBase"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit1>
-      <Unit2>
         <Filename Value="frmMain.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FormMain"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit2>
-      <Unit3>
+      </Unit1>
+      <Unit2>
         <Filename Value="dlgControl.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DialogControl"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="../native/sourceloader.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit3>
       <Unit4>
-        <Filename Value="../native/sourceloader.pas"/>
+        <Filename Value="cardzip.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
     </Units>
@@ -72,6 +66,9 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

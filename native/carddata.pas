@@ -61,6 +61,7 @@ type
     class function fromJson(AJson: TJSONObject): TCardData;
     procedure toJsonFile(AFilePath: string);
     constructor Create;
+    procedure loadDefault();
   public
     // card info property
     property CardType: TCardType read FCardType write FCardType;
@@ -212,6 +213,11 @@ begin
 end;
 
 constructor TCardData.Create;
+begin
+  loadDefault();
+end;
+
+procedure TCardData.loadDefault();
 begin
   FAttribute:= maGod;
   FCardAtk:= '';

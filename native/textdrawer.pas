@@ -70,23 +70,31 @@ end;
 
 procedure drawScaleLeftValue(base: TPortableNetworkGraphic; afont: TFontLoader;
   value: Integer);
+var
+  left: Integer;
 begin
   baseCanvasConfig(base);
   with base.Canvas do begin
     Font.Name:= afont.ScaleLeft.Font;
     Font.Size:= afont.ScaleLeft.Size;
-    TextOut(afont.ScaleLeft.X, afont.ScaleLeft.Y, value.ToString);
+    left := afont.ScaleLeft.X;
+    if (value.ToString.Length = 2) then left -= (afont.ScaleLeft.Size div 4);
+    TextOut(left, afont.ScaleLeft.Y, value.ToString);
   end;
 end;
 
 procedure drawScaleRightValue(base: TPortableNetworkGraphic;
   afont: TFontLoader; value: Integer);
+var
+  left: Integer;
 begin
   baseCanvasConfig(base);
   with base.Canvas do begin
     Font.Name:= afont.ScaleRight.Font;
     Font.Size:= afont.ScaleRight.Size;
-    TextOut(afont.ScaleRight.X, afont.ScaleRight.Y, value.ToString);
+    left := afont.ScaleRight.X;
+    if (value.ToString.Length = 2) then left -= (afont.ScaleRight.Size div 4);
+    TextOut(left, afont.ScaleRight.Y, value.ToString);
   end;
 end;
 

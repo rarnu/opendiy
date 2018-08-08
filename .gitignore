@@ -4,4 +4,6 @@ lib/
 *.o
 *.ppu
 *.ctps
+tmp/
+ppas.sh
 

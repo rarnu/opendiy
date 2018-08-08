@@ -36,8 +36,8 @@ begin
   Result.CardLevel:= 4;
   Result.CardAtk:= '9500';
   Result.CardDef:= '9999';
-  Result.CardScaleLeft:= 5;
-  Result.CardScaleRight:= 9;
+  Result.CardScaleLeft:= 12;
+  Result.CardScaleRight:= 10;
   Result.CardRace:= '【幻竜族/効果】';
   Result.IsCommented:= True;
   Result.RareType:= rtRed;
@@ -83,22 +83,23 @@ begin
   v := TFontLoader.validate();
   WriteLn(Format('fonts => %s', [BoolToStr(v, True)]));
 
-  (*
-
   src := TSources.Create('../module');
 
+  (*
   info := test1();
   font := TFontLoader.Create(info.IsCommented);
   TCardDrawer.drawCard(info, src, font, 'a.png');
   font.Free;
   info.Free;
+  *)
 
   info := test11();
-  font := TFontLoader.Create(info.IsCommented);
+  font := TFontLoader.Create('', info.IsCommented);
   TCardDrawer.drawCard(info, src, font, 'b.png');
   font.Free;
   info.Free;
 
+  (*
   info := test2();
   font := TFontLoader.Create(info.IsCommented);
   TCardDrawer.drawCard(info, src, font, 'c.png');
@@ -111,9 +112,8 @@ begin
   font.Free;
   info.Free;
 
-  src.Free;
-
   *)
+  src.Free;
 
 end.
 

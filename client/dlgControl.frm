@@ -1,4 +1,4 @@
-inherited DialogControl: TDialogControl
+object DialogControl: TDialogControl
   OnCreate = FormCreate
   Position = poMainFormCenter
 end

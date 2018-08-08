@@ -44,10 +44,12 @@ type
 
   TFontLoader = class
   private
+    FFileName: string;
     FAtkValue: TFontBase;
     FCopyrightValue: TRightFontBase;
     FDefValue: TFontBase;
     FEffectValue: TEffectValue;
+    FIsCommented: Boolean;
     FLinkValue: TFontBase;
     FMTEffect: TEffectValue;
     FNameValue: TFontBase;
@@ -59,8 +61,9 @@ type
     FScaleLeft: TFontBase;
     FScaleRight: TFontBase;
     FTermValue: TFontBase;
+    procedure SetIsCommented(AValue: Boolean);
   public
-    constructor Create(AUseComment: Boolean);
+    constructor Create(AFileName: string; AUseComment: Boolean);
     destructor Destroy; override;
     class function validate(): Boolean;
   public
@@ -79,6 +82,7 @@ type
     property PasswordValue: TFontBase read FPasswordValue write FPasswordValue;
     property CopyrightValue: TRightFontBase read FCopyrightValue write FCopyrightValue;
     property NameValue: TFontBase read FNameValue write FNameValue;
+    property IsCommented: Boolean read FIsCommented write SetIsCommented;
   end;
 
   { TFontConfig }
@@ -203,7 +207,7 @@ type
     procedure SetTermX(AValue: Integer);
     procedure SetTermY(AValue: Integer);
   public
-    constructor Create;
+    constructor Create(AFileName: string);
     destructor Destroy; override;
   public
     property Link: string read GetLink write SetLink;
@@ -946,9 +950,9 @@ begin
   ini.WriteInteger(SEC_CONFIG, KEY_FONT_TERM_Y, AValue);
 end;
 
-constructor TFontConfig.Create;
+constructor TFontConfig.Create(AFileName: string);
 begin
-  ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
+  ini := TIniFile.Create(ChangeFileExt(AFileName, '.cfg'));
 end;
 
 destructor TFontConfig.Destroy;
@@ -979,7 +983,37 @@ begin
   inherited Destroy;
 end;
 
-constructor TFontLoader.Create(AUseComment: Boolean);
+procedure TFontLoader.SetIsCommented(AValue: Boolean);
+var
+  jp: string;
+  zh: string;
+  ini: TIniFile;
+begin
+  FIsCommented:=AValue;
+  if (FFileName = '') then begin
+    ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
+  end else begin
+    ini := TIniFile.Create(ChangeFileExt(FFileName, '.cfg'));
+  end;
+  jp := ini.ReadString(SEC_CONFIG, KEY_FONT_EFFECT_JP, 'YGODIY-JP');
+  zh := ini.ReadString(SEC_CONFIG, KEY_FONT_EFFECT_ZH, 'DFPLiShuW5-B5');
+  if (FIsCommented) then begin
+    FRaceValue.Font:= jp;
+    FEffectValue.Font:= jp;
+    FPendulumEffectValue.Font:= jp;
+    FMTEffect.Font:= jp;
+    FNameValue.Font:= jp;
+  end else begin
+    FRaceValue.Font:= zh;
+    FEffectValue.Font:= zh;
+    FPendulumEffectValue.Font:= zh;
+    FMTEffect.Font:= zh;
+    FNameValue.Font:= ini.ReadString(SEC_CONFIG, KEY_FONT_NAME_ZH, 'DFLeiSho-SB');
+  end;
+  ini.Free;
+end;
+
+constructor TFontLoader.Create(AFileName: string; AUseComment: Boolean);
 var
   ini: TIniFile;
   atkdef: string;
@@ -989,7 +1023,12 @@ var
   zh: string;
   pp: string;
 begin
-  ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
+  FFileName:= AFileName;
+  if (FFileName = '') then begin
+    ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
+  end else begin
+    ini := TIniFile.Create(ChangeFileExt(FFileName, '.cfg'));
+  end;
 
   FLinkValue := TFontBase.Create;
   FLinkValue.Font:= ini.ReadString(SEC_CONFIG, KEY_FONT_LINK, 'EurostileCandyW01-Semibold');
