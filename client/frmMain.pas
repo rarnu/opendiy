@@ -48,6 +48,7 @@ type
     imgMTType: TImage;
     imgCardImg: TImage;
     imgCard: TImage;
+    pnlProgress: TPanel;
     xTerm: TLabel;
     xPack: TLabel;
     xPassword: TLabel;
@@ -179,8 +180,11 @@ type
     procedure notifyRedrawCardViaKey(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     // data
+    FModulePath: string;
     FSource: TSources;
     FChanged: Boolean;
+    FSavedFileName: string;
+    procedure drawCardCallback(Sender: TObject; ASucc: Boolean);
     function GetIsPendulum: Boolean;
     procedure redrawCard();
     procedure SetIsPendulum(AValue: Boolean);
@@ -200,7 +204,7 @@ var
 implementation
 
 uses
-  cardzip;
+  cardzip, drawcardthread;
 
 {$R *.frm}
 
@@ -210,10 +214,14 @@ procedure TFormMain.FormCreate(Sender: TObject);
 begin
   inherited;
   DoubleBuffered:= True;
-
+  FSavedFileName := '';
   Height:= 770;
   Width:= 880;
-  FSource := TSources.Create('../module/');
+  FModulePath := ParamStr(1);
+  if (FModulePath.Trim = '') then begin
+    FModulePath:= ExtractFilePath(ParamStr(0)) + 'module/';
+  end;
+  FSource := TSources.Create(FModulePath);
   pnlMagic.Visible:= False;
   pnlTrap.Visible:= False;
 
@@ -257,8 +265,34 @@ begin
 end;
 
 procedure TFormMain.btnDrawCardClick(Sender: TObject);
+var
+  outPath: string = '';
 begin
-  // TODO: export card
+  if (string(txtCardName.Text).Trim = '') then begin
+    MessageDlg('提示', '没有卡片名称，不能导出图片', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+  if (FSavedFileName = '') or (not FileExists(FSavedFileName)) or (FChanged) then begin
+    MessageDlg('提示', '未保存，不能导出图片', mtWarning, [mbOK], 0);
+    Exit;
+  end;
+
+  with TSelectDirectoryDialog.Create(nil) do begin
+    if (Execute) then begin
+      outPath := FileName;
+      if (not outPath.EndsWith(DirectorySeparator)) then begin
+        outPath += DirectorySeparator;
+      end;
+    end;
+    Free;
+  end;
+  if (outPath <> '') then begin
+    pnlProgress.Visible:= True;
+    with TDrawCardThread.Create(FModulePath, FSavedFileName, outPath) do begin
+      Callback:=@drawCardCallback;
+      Start;
+    end;
+  end;
 end;
 
 procedure TFormMain.btnNewCardClick(Sender: TObject);
@@ -325,6 +359,8 @@ begin
   tbTrap8.Checked:= False;
   tbTrap9.Checked:= False;
 
+  FSavedFileName := '';
+
   cmbCardTypeChange(cmbCardType);
   FChanged := False;
 end;
@@ -381,6 +417,7 @@ begin
 
   with TOpenDialog.Create(nil) do begin
     if (Execute) then begin
+      FSavedFileName := FileName;
       cd := TCardZip.ygoToCardData(FileName);
       cmbCardType.ItemIndex:= cardType2Int(cd.CardType);
       case cd.CardType of
@@ -541,6 +578,7 @@ begin
       cd.IsCommented:= chkCommented.Checked;
       cd.IsStretch:= chkStretch.Checked;
       TCardZip.cardDataToYgo(cd, FileName);
+      FSavedFileName := FileName;
       cd.Free;
     end;
     Free;
@@ -722,6 +760,14 @@ end;
 function TFormMain.GetIsPendulum: Boolean;
 begin
   Exit(cmbPendulumType.ItemIndex <> 0);
+end;
+
+procedure TFormMain.drawCardCallback(Sender: TObject; ASucc: Boolean);
+begin
+  pnlProgress.Visible:= False;
+  if (not ASucc) then begin
+    MessageDlg('提示', '导出图片失败', mtWarning, [mbOK], 0);
+  end;
 end;
 
 procedure TFormMain.SetIsPendulum(AValue: Boolean);

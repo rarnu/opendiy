@@ -5,5 +5,7 @@ lib/
 *.ppu
 *.ctps
 tmp/
+.tmp/
 ppas.sh
+release/
 

@@ -7,112 +7,42 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, Classes, sysutils, carddata, carddrawer, sourceloader, fontloader,
-  textdrawer, textliner;
-
-
-function test1(): TCardData;
-begin
-  Result := TCardData.Create;
-  Result.CardType:= ctMonster;
-  Result.MonsterType:= otLink;
-  Result.Attribute:= maDark;
-  Result.LinkPosition:= [lp1, lp2, lp3];
-  Result.LinkValue:= '2';
-  Result.CardAtk:= '9500';
-  Result.CardRace:= '【幻竜族/効果】';
-  Result.IsCommented:= True;
-  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
-  Result.CardImage:= 'sample.png';
-  Result.IsStretch:= True;
-end;
-
-function test11(): TCardData;
-begin
-  Result := TCardData.Create;
-  Result.CardName:= '幻竜効果';
-  Result.CardType:= ctMonster;
-  Result.PendulumType:= ptEffect;
-  Result.Attribute:= maDark;
-  Result.CardLevel:= 4;
-  Result.CardAtk:= '9500';
-  Result.CardDef:= '9999';
-  Result.CardScaleLeft:= 12;
-  Result.CardScaleRight:= 10;
-  Result.CardRace:= '【幻竜族/効果】';
-  Result.IsCommented:= True;
-  Result.RareType:= rtRed;
-  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
-  Result.CardPendulumEffect:= Result.CardEffect;
-  Result.CardPack:= 'CP17-JP033';
-  Result.CardImage:= 'sample.png';
-  Result.IsStretch:= False;
-end;
-
-function test2(): TCardData;
-begin
-  Result := TCardData.Create;
-  Result.CardType:= ctMagic;
-  Result.IsLink:= False;
-  Result.MagicType:= mtCont;
-  Result.IsCommented:= True;
-  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
-  Result.CardPassword:= '88888888';
-  Result.CardPack:= 'CP17-JP033';
-  Result.CardTerm:= 'Duel Terminal';
-  Result.CardImage:= 'sample.png';
-end;
-
-function test3(): TCardData;
-begin
-  Result := TCardData.Create;
-  Result.CardType:= ctTrap;
-  Result.IsLink:= True;
-  Result.LinkPosition:= [lp8, lp2];
-  Result.IsCommented:= False;
-  Result.CardEffect:= 'この効果を使うには、自身のリンク先にリクルートしたいモンスターと同じ種族のモンスターを置く必要がある。基本的には、自分フィールドのリンク先となる場所に目当ての種族のモンスターを出したい。そのための展開力が不足している場合は、(1)の効果や壊獣の送りつけギミックで相手フィールドのリンク先にモンスターを配置してもよい。リンク先となる相手フィールドに相手が狙いの種族のモンスターを出している場合もないではないが、あまり期待はしないほうが良いだろう。';
-  Result.CardImage:= 'sample.png';
-end;
+  textdrawer, textliner, cardzip;
 
 var
   v: Boolean;
   src: TSources;
   info: TCardData;
   font: TFontLoader;
+
+  modulePath: string;
+  ygoPath: string;
+  outPath: string;
+  cfgPath: string;
 begin
-
   v := TFontLoader.validate();
-  WriteLn(Format('fonts => %s', [BoolToStr(v, True)]));
+  if (not v) then begin
+    Exit;
+  end;
+  modulePath:= ParamStr(1);
+  ygoPath:= ParamStr(2);
+  outPath:= ParamStr(3);
 
-  src := TSources.Create('../module');
+  if (not DirectoryExists(modulePath)) or (not FileExists(ygoPath)) or (outPath.Trim = '') then begin
+    Exit;
+  end;
 
-  (*
-  info := test1();
-  font := TFontLoader.Create(info.IsCommented);
-  TCardDrawer.drawCard(info, src, font, 'a.png');
+  src := TSources.Create(modulePath);
+  info := TCardZip.ygoToCardData(ygoPath);
+  info.CardImage:= ExtractFilePath(ParamStr(0)) + '.tmp' + DirectorySeparator + '.origin.png';
+  if (not outPath.EndsWith(DirectorySeparator)) then outPath += DirectorySeparator;
+  outPath += info.CardName + '.png';
+  cfgPath:= ExtractFilePath(ParamStr(0)) + '.tmp' + DirectorySeparator + 'card.cfg';
+  if (not FileExists(cfgPath)) then cfgPath:= '';
+  font := TFontLoader.Create(cfgPath, info.IsCommented);
+  TCardDrawer.drawCard(info, src, font, outPath);
   font.Free;
   info.Free;
-  *)
-
-  info := test11();
-  font := TFontLoader.Create('', info.IsCommented);
-  TCardDrawer.drawCard(info, src, font, 'b.png');
-  font.Free;
-  info.Free;
-
-  (*
-  info := test2();
-  font := TFontLoader.Create(info.IsCommented);
-  TCardDrawer.drawCard(info, src, font, 'c.png');
-  font.Free;
-  info.Free;
-
-  info := test3();
-  font := TFontLoader.Create(info.IsCommented);
-  TCardDrawer.drawCard(info, src, font, 'd.png');
-  font.Free;
-  info.Free;
-
-  *)
   src.Free;
 
 end.

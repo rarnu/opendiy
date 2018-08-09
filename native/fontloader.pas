@@ -993,7 +993,7 @@ begin
   if (FFileName = '') then begin
     ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
   end else begin
-    ini := TIniFile.Create(ChangeFileExt(FFileName, '.cfg'));
+    ini := TIniFile.Create(FFileName);
   end;
   jp := ini.ReadString(SEC_CONFIG, KEY_FONT_EFFECT_JP, 'YGODIY-JP');
   zh := ini.ReadString(SEC_CONFIG, KEY_FONT_EFFECT_ZH, 'DFPLiShuW5-B5');
@@ -1027,7 +1027,7 @@ begin
   if (FFileName = '') then begin
     ini := TIniFile.Create(ChangeFileExt(ParamStr(0), '.cfg'));
   end else begin
-    ini := TIniFile.Create(ChangeFileExt(FFileName, '.cfg'));
+    ini := TIniFile.Create(FFileName);
   end;
 
   FLinkValue := TFontBase.Create;

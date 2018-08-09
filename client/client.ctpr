@@ -26,7 +26,7 @@
         <PackageName Value="adLCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="5">
+    <Units Count="6">
       <Unit0>
         <Filename Value="client.ppr"/>
         <IsPartOfProject Value="True"/>
@@ -53,12 +53,16 @@
         <Filename Value="cardzip.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit4>
+      <Unit5>
+        <Filename Value="drawcardthread.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <Target>
-      <Filename Value="client"/>
+      <Filename Value="../release/client"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
@@ -66,9 +70,6 @@
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
-      <Debugging>
-        <UseHeaptrc Value="True"/>
-      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

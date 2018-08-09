@@ -275,6 +275,7 @@ object FormMain: TFormMain
       Font.Color = clBlack
       Font.Height = 11
       Font.Name = 'Yugioh Copyright'
+      Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
     end
@@ -1825,5 +1826,18 @@ object FormMain: TFormMain
       OnClick = btnDrawCardClick
       TabOrder = 3
     end
+  end
+  object pnlProgress: TPanel
+    Left = 208
+    Height = 112
+    Top = 328
+    Width = 472
+    BevelInner = bvRaised
+    BevelOuter = bvLowered
+    Caption = '正在导出图片，请稍候...'
+    Font.Height = 20
+    ParentFont = False
+    TabOrder = 3
+    Visible = False
   end
 end
