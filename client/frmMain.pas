@@ -18,6 +18,8 @@ type
     btnOpenCard: TButton;
     btnSaveCard: TButton;
     btnDrawCard: TButton;
+    btnRefresh: TButton;
+    btnAbout: TButton;
     chkCommented: TCheckBox;
     chkFaceType: TCheckBox;
     chkMagicIsLink: TCheckBox;
@@ -168,10 +170,12 @@ type
     txtCardPack: TEdit;
     txtCardPassword: TEdit;
     txtCardTerm: TEdit;
+    procedure btnAboutClick(Sender: TObject);
     procedure btnCardImageClick(Sender: TObject);
     procedure btnDrawCardClick(Sender: TObject);
     procedure btnNewCardClick(Sender: TObject);
     procedure btnOpenCardClick(Sender: TObject);
+    procedure btnRefreshClick(Sender: TObject);
     procedure btnSaveCardClick(Sender: TObject);
     procedure cmbCardTypeChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -204,7 +208,7 @@ var
 implementation
 
 uses
-  cardzip, drawcardthread;
+  cardzip, drawcardthread, untCardFace, frmAbout;
 
 {$R *.frm}
 
@@ -222,11 +226,8 @@ begin
     FModulePath:= ExtractFilePath(ParamStr(0)) + 'module/';
   end;
   FSource := TSources.Create(FModulePath);
-  pnlMagic.Visible:= False;
-  pnlTrap.Visible:= False;
-
-  redrawCard();
-  FChanged := False;
+  FChanged:= False;
+  btnNewCardClick(btnNewCard);
 end;
 
 procedure TFormMain.cmbCardTypeChange(Sender: TObject);
@@ -260,6 +261,14 @@ begin
     if (Execute) then begin
       loadCardImage(FileName, True);
     end;
+    Free;
+  end;
+end;
+
+procedure TFormMain.btnAboutClick(Sender: TObject);
+begin
+  with TFormAbout.Create(nil) do begin
+    ShowModal;
     Free;
   end;
 end;
@@ -304,6 +313,8 @@ begin
     if (m = mrCancel) then Exit;
   end;
 
+  resetCardFace(Self);
+
   cmbCardType.ItemIndex:= 0;
   chkMagicIsLink.Checked:= False;
   chkTrapIsLink.Checked:= False;
@@ -318,7 +329,7 @@ begin
   txtCardName.Text:= '';
   cmbLevel.ItemIndex:= 0;
   txtCardPack.Text:= '';
-  txtCardCopyright.Text:= '';
+  txtCardCopyright.Text:= '©高桥和希 スタジオ·ダイス/集英社';
   txtCardPassword.Text:= '';
   txtCardTerm.Text:= '';
   txtCardRace.Text:= '';
@@ -467,6 +478,15 @@ begin
     Free;
   end;
   FChanged := False;
+end;
+
+procedure TFormMain.btnRefreshClick(Sender: TObject);
+var
+  ch: Boolean;
+begin
+  ch := FChanged;
+  redrawCard();
+  FChanged:= ch;
 end;
 
 procedure TFormMain.btnSaveCardClick(Sender: TObject);

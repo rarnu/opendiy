@@ -5,6 +5,7 @@ object FormMain: TFormMain
   Width = 880
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
+  Caption = 'OpenDIY'
   ClientHeight = 770
   ClientWidth = 880
   OnCreate = FormCreate
@@ -1825,6 +1826,28 @@ object FormMain: TFormMain
       Caption = '印卡！'
       OnClick = btnDrawCardClick
       TabOrder = 3
+    end
+    object btnRefresh: TButton
+      Left = 696
+      Height = 30
+      Top = 10
+      Width = 75
+      Align = alRight
+      BorderSpacing.Around = 8
+      Caption = '刷新'
+      OnClick = btnRefreshClick
+      TabOrder = 4
+    end
+    object btnAbout: TButton
+      Left = 259
+      Height = 30
+      Top = 10
+      Width = 75
+      Align = alLeft
+      BorderSpacing.Around = 8
+      Caption = '关于'
+      OnClick = btnAboutClick
+      TabOrder = 5
     end
   end
   object pnlProgress: TPanel
