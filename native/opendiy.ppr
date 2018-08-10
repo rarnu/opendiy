@@ -1,4 +1,10 @@
+{.$DEFINE EXECUTABLE}
+
+{$IFDEF EXECUTABLE}
 program opendiy;
+{$ELSE}
+library opendiy;
+{$ENDIF}
 
 {$mode objfpc}{$H+}
 
@@ -7,43 +13,83 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, Classes, sysutils, carddata, carddrawer, sourceloader, fontloader,
-  textdrawer, textliner, cardzip;
+  textdrawer, textliner, cardzip, jni2;
 
+procedure drawYGOCard(modulePath: string; ygoPath: string; outPath: string; tmpPath: string);
 var
-  v: Boolean;
   src: TSources;
   info: TCardData;
   font: TFontLoader;
-
-  modulePath: string;
-  ygoPath: string;
-  outPath: string;
   cfgPath: string;
 begin
-  v := TFontLoader.validate();
-  if (not v) then begin
-    Exit;
-  end;
-  modulePath:= ParamStr(1);
-  ygoPath:= ParamStr(2);
-  outPath:= ParamStr(3);
-
   if (not DirectoryExists(modulePath)) or (not FileExists(ygoPath)) or (outPath.Trim = '') then begin
     Exit;
   end;
-
+  if (not DirectoryExists(tmpPath)) then ForceDirectories(tmpPath);
+  if (not tmpPath.EndsWith(DirectorySeparator)) then tmpPath += DirectorySeparator;
   src := TSources.Create(modulePath);
-  info := TCardZip.ygoToCardData(ygoPath);
-  info.CardImage:= ExtractFilePath(ParamStr(0)) + '.tmp' + DirectorySeparator + '.origin.png';
+  info := TCardZip.ygoToCardData(ygoPath, tmpPath);
+  info.CardImage:= tmpPath + '.origin.png';
   if (not outPath.EndsWith(DirectorySeparator)) then outPath += DirectorySeparator;
   outPath += info.CardName + '.png';
-  cfgPath:= ExtractFilePath(ParamStr(0)) + '.tmp' + DirectorySeparator + 'card.cfg';
+  cfgPath:= tmpPath + 'card.cfg';
   if (not FileExists(cfgPath)) then cfgPath:= '';
   font := TFontLoader.Create(cfgPath, info.IsCommented);
   TCardDrawer.drawCard(info, src, font, outPath);
   font.Free;
   info.Free;
   src.Free;
+end;
+
+{$IFDEF EXECUTABLE}
+var
+  modulePath: string;
+  ygoPath: string;
+  outPath: string;
+begin
+  modulePath:= ParamStr(1);
+  ygoPath:= ParamStr(2);
+  outPath:= ParamStr(3);
+  drawYGOCard(modulePath, ygoPath, outPath, ExtractFilePath(ParamStr(0)) + '.tmp');
+end.
+
+{$ELSE}
+
+procedure drawCard(amodulePath: PChar; aygoPath: PChar; aoutPath: PChar; atmpPath: PChar); cdecl;
+var
+  tmpPath: string;
+  modulePath: string;
+  ygoPath: string;
+  outPath: string;
+begin
+  tmpPath:= string(atmpPath);
+  modulePath:= string(amodulePath);
+  ygoPath:= string(aygoPath);
+  outPath:= string(aoutPath);
+  drawYGOCard(modulePath, ygoPath, outPath, tmpPath);
+end;
+
+procedure Java_com_rarnu_opendiy_OpenDIY_drawCard(env: PJNIEnv; obj: jobject; amodulePath: jstring; aygoPath: jstring; aoutPath:jstring; atmpPath: jstring); cdecl;
+var
+  tmpPath: string;
+  modulePath: string;
+  ygoPath: string;
+  outPath: string;
+begin
+  tmpPath:= TJNIEnv.JStringToString(env, atmpPath);
+  modulePath:= TJNIEnv.JStringToString(env, amodulePath);
+  ygoPath:= TJNIEnv.JStringToString(env, aygoPath);
+  outPath:= TJNIEnv.JStringToString(env, aoutPath);
+  drawYGOCard(modulePath, ygoPath, outPath, tmpPath);
+end;
+
+exports
+  drawCard,
+  Java_com_rarnu_opendiy_OpenDIY_drawCard;
+
+begin
 
 end.
+
+{$ENDIF}
 

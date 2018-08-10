@@ -65,7 +65,9 @@ type
   public
     constructor Create(AFileName: string; AUseComment: Boolean);
     destructor Destroy; override;
+    {$IFDEF EXECUTABLE}
     class function validate(): Boolean;
+    {$ENDIF}
   public
     property LinkValue: TFontBase read FLinkValue write FLinkValue;
     property AtkValue: TFontBase read FAtkValue write FAtkValue;
@@ -1156,6 +1158,7 @@ begin
   ini.Free;
 end;
 
+{$IFDEF EXECUTABLE}
 class function TFontLoader.validate(): Boolean;
 const
   FONTS: array[0..7] of string = (
@@ -1179,6 +1182,7 @@ begin
   end;
   Exit(ret);
 end;
+{$ENDIF}
 
 end.
 

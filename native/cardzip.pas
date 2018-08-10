@@ -13,7 +13,7 @@ type
 
   TCardZip = class
   public
-    class function ygoToCardData(AFilePath: string): TCardData;
+    class function ygoToCardData(AFilePath: string; ATmpPath: string = ''): TCardData;
     class procedure cardDataToYgo(ACardData: TCardData; AFilePath: string);
   end;
 
@@ -21,12 +21,17 @@ implementation
 
 { TCardZip }
 
-class function TCardZip.ygoToCardData(AFilePath: string): TCardData;
+class function TCardZip.ygoToCardData(AFilePath: string; ATmpPath: string
+  ): TCardData;
 var
   z: TUnZipper;
   tmpPath: string;
 begin
-  tmpPath:= ExtractFilePath(ParamStr(0)) + '.tmp' + DirectorySeparator;
+  if (ATmpPath = '') then begin
+    tmpPath:= ExtractFilePath(ParamStr(0)) + '.tmp' + DirectorySeparator;
+  end else begin
+    tmpPath:= ATmpPath;
+  end;
   if (not DirectoryExists(tmpPath)) then ForceDirectories(tmpPath);
   z := TUnZipper.Create;
   z.FileName:= AFilePath;
