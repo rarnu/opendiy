@@ -1,4 +1,4 @@
-{.$DEFINE EXECUTABLE}
+{$DEFINE EXECUTABLE}
 
 {$IFDEF EXECUTABLE}
 program opendiy;
@@ -13,7 +13,70 @@ uses
   cthreads,
   {$ENDIF}
   Interfaces, Classes, sysutils, carddata, carddrawer, sourceloader, fontloader,
-  textdrawer, textliner, cardzip, jni2;
+  textdrawer, textliner, cardzip, jni2, jsonparser, fpjson, jsonscanner;
+
+procedure newYGOProject(outPath: string);
+var
+  cd: TCardData;
+  fc: TFontConfig;
+begin
+  if (DirectoryExists(outPath)) or (FileExists(outPath)) then begin
+    WriteLn('Path already exists.');
+    Exit;
+  end;
+
+  ForceDirectories(outPath);
+  if (not outPath.EndsWith(DirectorySeparator)) then outPath += DirectorySeparator;
+  cd := TCardData.Create;
+  cd.toJsonFile(outPath + 'card.data');
+  cd.Free;
+  fc := TFontConfig.Create(outPath + 'card.cfg');
+  fc.saveInit();
+  fc.Free;
+  with TStringList.Create do begin
+    Text:= 'Put card image here named ".origin.png" and an image thumb named ".card.png". Be ware the name of files are starts with a dot.';
+    SaveToFile(outPath + 'comment.txt');
+    Free;
+  end;
+end;
+
+procedure packYGOProject(projPath: string; outFile: string);
+var
+  dataFile: string;
+  parser: TJSONParser = nil;
+  json: TJSONObject = nil;
+  jsonstring: string = '';
+begin
+  if (not projPath.EndsWith(DirectorySeparator)) then projPath += DirectorySeparator;
+  dataFile:= projPath + 'card.data';
+  if (not FileExists(dataFile)) then begin
+    WriteLn('Data file not exists.');
+    Exit;
+  end;
+  with TStringList.Create do begin
+    LoadFromFile(dataFile);
+    jsonstring:= Text;
+    Free;
+  end;
+  try
+    try
+      parser := TJSONParser.Create(jsonstring, [joUTF8]);
+      json := TJSONObject(parser.Parse);
+      if (json.Strings['cardname'] = '') then begin
+        WriteLn('Card name is empty, cannot pack card.');
+      end else begin
+        TCardZip.projectToYgo(projPath, outFile);
+      end;
+    except
+      on e: Exception do begin
+        WriteLn('Data file error.');
+      end;
+    end;
+  finally
+    if (parser <> nil) then parser.Free;
+    if (json <> nil) then json.Free;
+  end;
+end;
 
 procedure drawYGOCard(modulePath: string; ygoPath: string; outPath: string; tmpPath: string);
 var
@@ -42,18 +105,76 @@ begin
 end;
 
 {$IFDEF EXECUTABLE}
+
+procedure writeHelp();
+begin
+  WriteLn('Usage: opendiy <command> <parameters>');
+  WriteLn('');
+  WriteLn('     <module path> <ygo file path> <output path>');
+end;
+
 var
+  cmd: string;
   modulePath: string;
   ygoPath: string;
   outPath: string;
+
+  outNewCardProj: string;
+  outYgoFile: string;
 begin
-  modulePath:= ParamStr(1);
-  ygoPath:= ParamStr(2);
-  outPath:= ParamStr(3);
-  drawYGOCard(modulePath, ygoPath, outPath, ExtractFilePath(ParamStr(0)) + '.tmp');
+  if (ParamCount = 0) then begin
+    writeHelp();
+    Exit;
+  end;
+  cmd := ParamStr(1);
+  if (cmd = 'create') then begin
+    if (ParamCount <> 2) then begin
+      writeHelp();
+      Exit;
+    end;
+    outNewCardProj:= ParamStr(2);
+    newYGOProject(outNewCardProj);
+  end else if (cmd = 'pack') then begin
+    if (ParamCount <> 3) then begin
+      writeHelp();
+      Exit;
+    end;
+    outNewCardProj:= ParamStr(2);
+    outYgoFile:= ParamStr(3);
+    packYGOProject(outNewCardProj, outYgoFile);
+  end else if (cmd = 'draw') then begin
+    if (ParamCount <> 4) then begin
+      writeHelp();
+      Exit;
+    end;
+    modulePath:= ParamStr(2);
+    ygoPath:= ParamStr(3);
+    outPath:= ParamStr(4);
+    drawYGOCard(modulePath, ygoPath, outPath, ExtractFilePath(ParamStr(0)) + '.tmp');
+  end else begin
+    writeHelp();
+  end;
 end.
 
 {$ELSE}
+
+procedure newProject(aoutPath: PChar); cdecl;
+var
+  outPath: string;
+begin
+  outPath:= string(aoutPath);
+  newYGOProject(outPath);
+end;
+
+procedure packProject(aprojPath: PChar; aoutFile: PChar); cdecl;
+var
+  projPath: string;
+  outFile: string;
+begin
+  projPath:= string(aprojPath);
+  outFile:= string(aoutFile);
+  packYGOProject(projPath, outFile);
+end;
 
 procedure drawCard(amodulePath: PChar; aygoPath: PChar; aoutPath: PChar; atmpPath: PChar); cdecl;
 var
@@ -67,6 +188,24 @@ begin
   ygoPath:= string(aygoPath);
   outPath:= string(aoutPath);
   drawYGOCard(modulePath, ygoPath, outPath, tmpPath);
+end;
+
+procedure Java_com_rarnu_opendiy_OpenDIY_newProject(env: PJNIEnv; obj: jobject; aoutPath: jstring); cdecl;
+var
+  outPath: string;
+begin
+  outPath:= TJNIEnv.JStringToString(env, aoutPath);
+  newYGOProject(outPath);
+end;
+
+procedure Java_com_rarnu_opendiy_OpenDIY_packProject(env: PJNIEnv; obj: jobject; aprojPath: jstring; aoutFile: jstring); cdecl;
+var
+  projPath: string;
+  outFile: string;
+begin
+  projPath:= string(aprojPath);
+  outFile:= string(aoutFile);
+  packYGOProject(projPath, outFile);
 end;
 
 procedure Java_com_rarnu_opendiy_OpenDIY_drawCard(env: PJNIEnv; obj: jobject; amodulePath: jstring; aygoPath: jstring; aoutPath:jstring; atmpPath: jstring); cdecl;
@@ -84,7 +223,11 @@ begin
 end;
 
 exports
+  newProject,
+  packProject,
   drawCard,
+  Java_com_rarnu_opendiy_OpenDIY_newProject,
+  Java_com_rarnu_opendiy_OpenDIY_packProject,
   Java_com_rarnu_opendiy_OpenDIY_drawCard;
 
 begin

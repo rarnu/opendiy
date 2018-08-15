@@ -210,6 +210,7 @@ type
     procedure SetTermY(AValue: Integer);
   public
     constructor Create(AFileName: string);
+    procedure saveInit();
     destructor Destroy; override;
   public
     property Link: string read GetLink write SetLink;
@@ -955,6 +956,69 @@ end;
 constructor TFontConfig.Create(AFileName: string);
 begin
   ini := TIniFile.Create(ChangeFileExt(AFileName, '.cfg'));
+end;
+
+procedure TFontConfig.saveInit();
+begin
+  // TODO:
+  ini.WriteString(SEC_CONFIG, KEY_FONT_LINK, 'EurostileCandyW01-Semibold');
+  ini.WriteString(SEC_CONFIG, KEY_FONT_ATKDEFSCALE, 'MatrixBoldSmallCaps');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_ATKDEF_SIZE, 95);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_ATK_X, 1490);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_ATK_Y, 3182);
+  ini.WriteString(SEC_CONFIG, KEY_FONT_COPYRIGHT, 'Yugioh Copyright');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_COPYRIGHT_RIGHT, 2170);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_COPYRIGHT_SIZE, 54);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_COPYRIGHT_Y, 3321);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_DEF_X, 1980);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_DEF_Y, 3182);
+  ini.WriteString(SEC_CONFIG, KEY_FONT_EFFECT_JP, 'YGODIY-JP');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_EFFECT_LINEHEIGHT, 64);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_EFFECT_RIGHT, 2210);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_EFFECT_SIZE, 64);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_EFFECT_X, 154);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_EFFECT_Y, 2702);
+  ini.WriteString(SEC_CONFIG, KEY_FONT_EFFECT_ZH, 'DFPLiShuW5-B5');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_LINK_SIZE, 92);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_LINK_X, 2111);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_LINK_Y, 3170);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_MTEFFECT_LINEHEIGHT, 64);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_MTEFFECT_RIGHT, 2210);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_MTEFFECT_SIZE, 64);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_MTEFFECT_X, 154);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_MTEFFECT_Y, 2622);
+  ini.WriteString(SEC_CONFIG, KEY_FONT_NAME_JP, 'YGODIY-JP');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_NAME_SIZE, 160);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_NAME_X, 160);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_NAME_Y, 186);
+  ini.WriteString(SEC_CONFIG, KEY_FONT_NAME_ZH, 'DFLeiSho-SB');
+  ini.WriteString(SEC_CONFIG, KEY_FONT_PACKPASS, 'ITC Stone Serif');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PACK_RIGHT, 2130);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PACK_SIZE, 65);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PACK_Y, 2504);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PASSWORD_SIZE, 72);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PASSWORD_X, 90);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PASSWORD_Y, 3326);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PEFFECT_LINEHEIGHT, 58);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PEFFECT_RIGHT, 2020);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PEFFECT_SIZE, 56);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PEFFECT_X, 350);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PEFFECT_Y, 2200);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PPACK_SIZE, 65);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PPACK_X, 190);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_PPACK_Y, 3195);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_RACE_SIZE, 76);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_RACE_X, 152);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_RACE_Y, 2622);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_SCALE_LEFT_X, 192);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_SCALE_LEFT_Y, 2390);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_SCALE_RIGHT_X, 2110);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_SCALE_RIGHT_Y, 2390);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_SCALE_SIZE, 150);
+  ini.WriteString(SEC_CONFIG, KEY_FONT_TERM, 'BankGothic Md BT');
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_TERM_SIZE, 80);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_TERM_X, 240);
+  ini.WriteInteger(SEC_CONFIG, KEY_FONT_TERM_Y, 2490);
 end;
 
 destructor TFontConfig.Destroy;

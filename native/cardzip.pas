@@ -15,6 +15,7 @@ type
   public
     class function ygoToCardData(AFilePath: string; ATmpPath: string = ''): TCardData;
     class procedure cardDataToYgo(ACardData: TCardData; AFilePath: string);
+    class procedure projectToYgo(AProjPath: string; AFilePath: string);
   end;
 
 implementation
@@ -62,6 +63,27 @@ begin
   if (FileExists(tmpPath + 'card.cfg')) then ze.AddFileEntry(tmpPath + 'card.cfg', 'card.cfg');
   if (FileExists(tmpPath + '.card.png')) then ze.AddFileEntry(tmpPath + '.card.png', '.card.png');
   if (FileExists(tmpPath + '.origin.png')) then ze.AddFileEntry(tmpPath + '.origin.png', '.origin.png');
+  try
+    z.ZipFiles(ze);
+  except
+  end;
+  ze.Free;
+  z.Free;
+end;
+
+class procedure TCardZip.projectToYgo(AProjPath: string; AFilePath: string);
+var
+  z: TZipper;
+  ze: TZipFileEntries;
+begin
+  z := TZipper.Create;
+  z.FileName:= AFilePath;
+  z.Clear;
+  ze := TZipFileEntries.Create(TZipFileEntry);
+  ze.AddFileEntry(AProjPath + 'card.data', 'card.data');
+  if (FileExists(AProjPath + 'card.cfg')) then ze.AddFileEntry(AProjPath + 'card.cfg', 'card.cfg');
+  if (FileExists(AProjPath + '.card.png')) then ze.AddFileEntry(AProjPath + '.card.png', '.card.png');
+  if (FileExists(AProjPath + '.origin.png')) then ze.AddFileEntry(AProjPath + '.origin.png', '.origin.png');
   try
     z.ZipFiles(ze);
   except
