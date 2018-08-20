@@ -1,3 +1,5 @@
+{$I define.inc}
+
 unit fontloader;
 
 {$mode objfpc}{$H+}

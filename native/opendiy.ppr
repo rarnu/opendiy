@@ -1,4 +1,4 @@
-{$DEFINE EXECUTABLE}
+{$I define.inc}
 
 {$IFDEF EXECUTABLE}
 program opendiy;
@@ -110,7 +110,16 @@ procedure writeHelp();
 begin
   WriteLn('Usage: opendiy <command> <parameters>');
   WriteLn('');
-  WriteLn('     <module path> <ygo file path> <output path>');
+  WriteLn('    command: create / pack / draw');
+  WriteLn('        [create]: opendiy create <project path>');
+  WriteLn('        [pack]:   opendiy pack <project path> <ygo path>');
+  WriteLn('        [draw]:   opendiy draw <module path> <ygo path> <output path>');
+  WriteLn('');
+  WriteLn('    samples:');
+  WriteLn('        opendiy create ~/Desktop/newcard');
+  WriteLn('        opendiy pack ~/Desktop/newcard ~/Desktop/newcard.ygo');
+  WriteLn('        opendiy draw module/ ~/Desktop/newcard.ygo ~/Desktop/');
+  WriteLn('');
 end;
 
 var
@@ -123,6 +132,11 @@ var
   outYgoFile: string;
 begin
   if (ParamCount = 0) then begin
+    writeHelp();
+    Exit;
+  end;
+  if (not TFontLoader.validate()) then begin
+    WriteLn('Fonts not installed. Install them first please.');
     writeHelp();
     Exit;
   end;
