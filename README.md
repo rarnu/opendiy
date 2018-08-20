@@ -5,6 +5,7 @@
 ### **Library**
 
 ```
+define.inc
 {.$DEFINE EXECUTABLE}
 ```
 
@@ -43,6 +44,7 @@ $ fpccmd AM opendiy.ppr
 ### **Executable**
 
 ```
+define.inc
 {$DEFINE EXECUTABLE}
 ```
 
